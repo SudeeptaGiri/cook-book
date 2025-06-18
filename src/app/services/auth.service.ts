@@ -41,6 +41,7 @@ export class AuthService {
     return this.http.post<User>(`${this.apiUrl}/users`, newUser).pipe(
       tap(user => {
         this.setCurrentUser(user);
+        console.log('User registered successfully:', user);
       }),
       catchError(error => {
         console.error('Registration error:', error);
