@@ -1,0 +1,141 @@
+<section class="max-w-xl mx-auto p-8 bg-white rounded-lg shadow-lg border border-gray-100">
+    <header class="mb-6">
+      <h1 class="text-2xl font-bold text-gray-800">Create an Account</h1>
+      <p class="text-sm text-gray-500 mt-1">Join our community today</p>
+    </header>
+  
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="space-y-2">
+          <label for="firstName" class="block text-sm font-medium text-gray-700">First Name</label>
+          <input 
+            id="firstName"
+            type="text" 
+            formControlName="firstName" 
+            placeholder="John" 
+            class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors" 
+          />
+          <div *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="text-red-500 text-xs mt-1">
+            First name is required
+          </div>
+        </div>
+  
+        <div class="space-y-2">
+          <label for="lastName" class="block text-sm font-medium text-gray-700">Last Name</label>
+          <input 
+            id="lastName"
+            type="text" 
+            formControlName="lastName" 
+            placeholder="Doe" 
+            class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors" 
+          />
+          <div *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" class="text-red-500 text-xs mt-1">
+            Last name is required
+          </div>
+        </div>
+      </div>
+  
+      <div class="space-y-2">
+        <label for="reg-email" class="block text-sm font-medium text-gray-700">Email address</label>
+        <input 
+          id="reg-email"
+          type="email" 
+          formControlName="email" 
+          placeholder="you@example.com" 
+          class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors" 
+        />
+        <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-red-500 text-xs mt-1">
+          Valid email is required
+        </div>
+      </div>
+  
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="space-y-2">
+          <label for="country" class="block text-sm font-medium text-gray-700">Country</label>
+          <select 
+            id="country"
+            formControlName="country" 
+            class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+          >
+            <option value="" disabled selected>Select your country</option>
+            <option value="us">United States</option>
+            <option value="ca">Canada</option>
+            <option value="uk">United Kingdom</option>
+            <!-- Add more countries as needed -->
+          </select>
+          <div *ngIf="registerForm.get('country')?.invalid && registerForm.get('country')?.touched" class="text-red-500 text-xs mt-1">
+            Country is required
+          </div>
+        </div>
+  
+        <div class="space-y-2">
+          <label for="region" class="block text-sm font-medium text-gray-700">Region</label>
+          <input 
+            id="region"
+            type="text" 
+            formControlName="region" 
+            placeholder="State/Province" 
+            class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors" 
+          />
+          <div *ngIf="registerForm.get('region')?.invalid && registerForm.get('region')?.touched" class="text-red-500 text-xs mt-1">
+            Region is required
+          </div>
+        </div>
+      </div>
+  
+      <div class="space-y-2">
+        <label for="reg-password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input 
+          id="reg-password"
+          type="password" 
+          formControlName="password" 
+          placeholder="••••••••" 
+          class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors" 
+        />
+        <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-red-500 text-xs mt-1">
+          Password must be at least 8 characters
+        </div>
+      </div>
+  
+      <div class="space-y-2">
+        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+        <input 
+          id="confirmPassword"
+          type="password" 
+          formControlName="confirmPassword" 
+          placeholder="••••••••" 
+          class="w-full py-2 px-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors" 
+        />
+        <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="text-red-500 text-xs mt-1">
+          Confirm your password
+        </div>
+        <div *ngIf="registerForm.errors?.['mismatch']" class="text-red-500 text-xs mt-1">
+          Passwords do not match
+        </div>
+      </div>
+  
+      <div class="flex items-start">
+        <div class="flex items-center h-5">
+          <input id="terms" type="checkbox" formControlName="terms" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+        </div>
+        <div class="ml-3 text-sm">
+          <label for="terms" class="font-medium text-gray-700">I agree to the <a href="#" class="text-blue-600 hover:underline">Terms</a> and <a href="#" class="text-blue-600 hover:underline">Privacy Policy</a></label>
+        </div>
+      </div>
+      
+      <button 
+        type="submit" 
+        [disabled]="registerForm.invalid"
+        class="w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm"
+      >
+        Create account
+      </button>
+    </form>
+  
+    <div class="mt-6 text-center">
+      <p class="text-sm text-gray-600">
+        Already have an account? 
+        <a (click)="logIn()" class="font-medium text-blue-600 hover:text-blue-500 hover:cursor-pointer">Sign in</a>
+      </p>
+    </div>
+  </section>

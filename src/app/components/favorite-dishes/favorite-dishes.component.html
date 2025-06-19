@@ -1,0 +1,29 @@
+<section class="p-6 bg-gray-50 min-h-screen">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">My Favorite Dishes</h1>
+  
+    <div *ngIf="favoriteDishes.length > 0; else noFavorites" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <article
+        *ngFor="let dish of favoriteDishes" (click)="openRecipePopup(dish)"
+        class="bg-white border border-gray-200 rounded-2xl shadow overflow-hidden"
+      >
+        <img [src]="dish.image" alt="{{ dish.name }}" class="w-full h-48 object-cover" />
+        <div class="p-4">
+          <h2 class="text-xl font-semibold mb-2 text-gray-900">{{ dish.name }}</h2>
+          <p class="text-sm text-gray-600"><strong>Cuisine:</strong> {{ dish.cuisine }}</p>
+          <p class="text-sm text-gray-600"><strong>Category:</strong> {{ dish.mealType?.join(', ') }}</p>
+          <p class="text-sm text-gray-600"><strong>Tags:</strong> {{ dish.tags?.join(', ') }}</p>
+          <p class="text-yellow-600 font-medium mt-2"><strong>Rating:</strong> {{ dish.rating }} ⭐</p>
+        </div>
+      </article>
+    </div>
+  
+    <ng-template #noFavorites>
+      <p class="text-lg text-gray-600">No favorite dishes found.</p>
+    </ng-template>
+    <app-recipe-detail-popup
+    [dish]="selectedDish"
+    [isOpen]="isPopupOpen"
+    (closePopup)="closeRecipePopup()"
+  ></app-recipe-detail-popup>
+  </section>
+  

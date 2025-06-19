@@ -1,0 +1,46 @@
+<section class="p-6 bg-gray-50 min-h-screen">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Dishes I Created</h1>
+  
+    <div *ngIf="myDishes.length > 0; else noRecipes" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <article
+        *ngFor="let dish of myDishes"
+        class="bg-white border border-gray-300 rounded-2xl shadow overflow-hidden"
+      >
+        <img [src]="dish.image" alt="{{ dish.name }}" class="w-full h-48 object-cover" />
+        <div class="p-4">
+          <h2 class="text-xl font-semibold text-gray-800 mb-1">{{ dish.name }}</h2>
+          <p class="text-sm text-gray-600"><strong>Cuisine:</strong> {{ dish.cuisine }}</p>
+          <p class="text-sm text-gray-600"><strong>Category:</strong> {{ dish.mealType?.join(', ') }}</p>
+          <p class="text-sm text-gray-600"><strong>Tags:</strong> {{ dish.tags?.join(', ') }}</p>
+          <p class="text-yellow-600 font-medium mt-2"><strong>Rating:</strong> {{ dish.rating }} ⭐</p>
+        </div>
+        <button 
+              (click)="openRecipePopup(dish)"
+              class="px-3 py-1.5 ml-2 bg-yellow-500 text-white rounded-md text-sm font-medium hover:bg-yellow-600 transition-colors flex items-center gap-1 float-left"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              View Recipe
+            </button>
+        <button class="mr-2 mb-2 float-right  px-3 py-1.5 ml-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-500 transition-colors flex items-center gap-1" (click)="deleteRecipe(dish.id)">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-6 0V5a1 1 0 011-1h4a1 1 0 011 1v2" />
+          </svg>
+          
+          Delete
+        </button>
+      </article>
+    </div>
+  
+    <ng-template #noRecipes>
+      <p class="text-lg text-gray-600">You haven't created any dishes yet.</p>
+    </ng-template>
+    <app-recipe-detail-popup
+    [dish]="selectedDish"
+    [isOpen]="isPopupOpen"
+    (closePopup)="closeRecipePopup()"
+  ></app-recipe-detail-popup>
+  </section>
+  

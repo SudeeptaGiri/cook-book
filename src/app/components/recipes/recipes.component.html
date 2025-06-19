@@ -1,0 +1,121 @@
+<app-header (searchChanged)="onSearchUpdate($event)" ></app-header>
+<app-category></app-category>
+
+<section class="p-6 bg-gray-50 min-h-screen">
+  <header class="mb-6">
+    <h1 class="text-3xl font-extrabold text-gray-800 mb-2">Most Popular Dishes</h1>
+
+    <!-- Filter Section -->
+    <form class="flex flex-col sm:flex-row gap-4 sm:items-center">
+      <label for="cuisine-filter" class="text-gray-700 font-medium">Filter by Cuisine:</label>
+      <select
+        id="cuisine-filter"
+        [(ngModel)]="selectedCuisine"
+        name="cuisine-filter"
+        class="p-2 rounded border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">All</option>
+        <option *ngFor="let cuisine of uniqueCuisines" [value]="cuisine">
+          {{ cuisine }}
+        </option>
+      </select>
+      
+      <label for="category-filter" class="text-gray-700 font-medium">Filter by Category:</label>
+      <select
+        id="category-filter"
+        [(ngModel)]="selectedCategory"
+        name="category-filter"
+        class="p-2 rounded border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">All</option>
+        <option *ngFor="let category of uniqueCategories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+      
+      <label for="time-filter" class="text-gray-700 font-medium">Filter by Cooking Time in minutes:</label>
+      <select
+        id="time-filter"
+        [(ngModel)]="selectedCookingTime"
+        name="time-filter"
+        class="p-2 rounded border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">All</option>
+        <option *ngFor="let cookingTime of uniqueCookingTimes" [value]="cookingTime">
+          {{ cookingTime }}
+        </option>
+      </select>
+      
+      <label for="difficulty-filter" class="text-gray-700 font-medium">Filter by difficulty:</label>
+      <select
+        id="difficulty-filter"
+        [(ngModel)]="selectedDifficulty"
+        name="difficulty-filter"
+        class="p-2 rounded border border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500"
+      >
+        <option value="">All</option>
+        <option *ngFor="let difficulty of uniqueDifficulties" [value]="difficulty">
+          {{ difficulty }}
+        </option>
+      </select>
+    </form>
+  </header>
+
+  <main>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <article
+        *ngFor="let dish of filteredDishes()"
+        class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow hover:shadow-lg transition-shadow"
+      >
+        <img
+          [src]="dish?.image"
+          alt="{{ dish?.name }}"
+          class="w-full h-48 object-cover"
+        />
+        <div class="p-4 bg-white rounded-lg shadow-sm">
+          <h2 class="text-xl font-semibold text-gray-800 mb-1">{{ dish?.name }}</h2>
+          <p class="text-sm text-gray-600 mb-1"><strong>Cuisine:</strong> {{ dish?.cuisine }}</p>
+          <p class="text-sm text-gray-600 mb-1"><strong>Category:</strong> {{ dish?.mealType.join(', ') }}</p>
+          <p class="text-sm text-gray-600 mb-1"><strong>Tags:</strong> {{ dish?.tags.join(', ') }}</p>
+          <p class="text-sm text-yellow-600 font-semibold mb-3"><strong>Rating:</strong> {{ dish?.rating }} ⭐</p>
+          <div class="flex justify-between items-center mt-2">
+            <button 
+  (click)="toggleFavorite(dish.id)"
+  class="px-3 py-1.5 border text-sm font-medium rounded-md flex items-center gap-1 transition-colors"
+  [ngClass]="{
+    'bg-red-100 text-red-600 border-red-300 hover:bg-red-200': isFavorite(dish.id),
+    'bg-white text-gray-700 border-gray-300 hover:bg-gray-50': !isFavorite(dish.id)
+  }"
+>
+  <svg *ngIf="isFavorite(dish.id)" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.41 4.41 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.59 3 22 5.41 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+  </svg>
+  <svg *ngIf="!isFavorite(dish.id)" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+  </svg>
+  {{ isFavorite(dish.id) ? 'Remove from Favorites' : 'Add to Favorites' }}
+</button>
+
+            <button 
+              (click)="openRecipePopup(dish)"
+              class="px-3 py-1.5 bg-yellow-500 text-white rounded-md text-sm font-medium hover:bg-yellow-600 transition-colors flex items-center gap-1"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              View Recipe
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <!-- Recipe Popup Component -->
+  <app-recipe-detail-popup
+    [dish]="selectedDish"
+    [isOpen]="isPopupOpen"
+    (closePopup)="closeRecipePopup()"
+  ></app-recipe-detail-popup>
+</section>

@@ -1,0 +1,108 @@
+<div 
+  *ngIf="isOpen" 
+  class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+  (click)="close()"
+>
+  <article 
+    *ngIf="dish"
+    class="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden"
+    (click)="$event.stopPropagation()"
+  >
+    <!-- Header with image -->
+    <header class="relative flex-shrink-0">
+      <img 
+        [src]="dish.image" 
+        [alt]="dish.name" 
+        class="w-full h-48 object-cover"
+      >
+      <button 
+        (click)="close()" 
+        class="absolute top-3 right-3 bg-white rounded-full p-1 shadow-md hover:bg-gray-100 transition-colors"
+        aria-label="Close popup"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </header>
+
+    <!-- Scrollable content -->
+    <section class="p-4 overflow-y-auto flex-grow">
+      <h2 class="text-2xl font-bold text-gray-800 mb-2 truncate">
+        <ng-container *ngIf="!isEditable">{{ dish.name }}</ng-container>
+        <input *ngIf="isEditable" [(ngModel)]="editableDish.name" class="border p-1 w-full rounded" />
+      </h2>
+
+      <!-- Meta info -->
+      <div class="flex flex-wrap gap-2 text-sm mb-4">
+        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded">{{ dish.cuisine }}</span>
+        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded">
+          <ng-container *ngIf="!isEditable">{{ dish.mealType.join(', ') }}</ng-container>
+          <input *ngIf="isEditable" [(ngModel)]="editableDish.mealType" class="border p-1 rounded w-full" />
+        </span>
+        <span class="px-2 py-1 bg-green-100 text-green-800 rounded">
+          <ng-container *ngIf="!isEditable">{{ dish.difficulty }}</ng-container>
+          <input *ngIf="isEditable" [(ngModel)]="editableDish.difficulty" class="border p-1 rounded w-24" />
+        </span>
+        <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded">
+          <ng-container *ngIf="!isEditable">{{ dish.cookingTime }} mins</ng-container>
+          <input *ngIf="isEditable" type="number" [(ngModel)]="editableDish.cookingTime" class="border p-1 w-20 rounded" />
+        </span>
+        <span class="px-2 py-1 bg-red-100 text-red-800 rounded">{{ dish.rating }} ⭐</span>
+      </div>
+
+      <!-- Ingredients -->
+      <div class="mb-4">
+        <h3 class="font-semibold mb-2 text-gray-800">Ingredients</h3>
+        <ul *ngIf="!isEditable" class="text-sm grid grid-cols-2 gap-x-4 list-disc list-inside">
+          <li *ngFor="let ingredient of dish.ingredients">{{ ingredient }}</li>
+        </ul>
+        <textarea *ngIf="isEditable" [(ngModel)]="editableDish.ingredients" rows="3" class="w-full border rounded p-2 text-sm" placeholder="Comma-separated"></textarea>
+      </div>
+
+      <!-- Instructions -->
+      <div class="mb-4">
+        <h3 class="font-semibold mb-2 text-gray-800">Instructions</h3>
+        <ol *ngIf="!isEditable" class="text-sm list-decimal list-inside space-y-1">
+          <li *ngFor="let instruction of dish.instructions">{{ instruction }}</li>
+        </ol>
+        <textarea *ngIf="isEditable" [(ngModel)]="editableDish.instructions" rows="4" class="w-full border rounded p-2 text-sm" placeholder="Comma-separated"></textarea>
+      </div>
+
+      <!-- Tags -->
+      <div class="mb-4">
+        <h3 class="font-semibold mb-2 text-gray-800">Tags</h3>
+        <div *ngIf="!isEditable" class="flex flex-wrap gap-2">
+          <span *ngFor="let tag of dish.tags" class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded-full">#{{ tag }}</span>
+        </div>
+        <input *ngIf="isEditable" [(ngModel)]="editableDish.tags" class="w-full border rounded p-2 text-sm" placeholder="Comma-separated tags" />
+      </div>
+    </section>
+
+    <!-- Footer buttons -->
+    <footer class="border-t p-4 flex justify-end gap-2 flex-shrink-0">
+      <!-- Add to Favorites -->
+      <button *ngIf="!isEditable" (click)="addToFavorites()" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-md text-sm hover:bg-gray-50 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+        Add to Favorites
+      </button>
+
+      <!-- Edit -->
+      <button *ngIf="isUserDish && !isEditable" (click)="enableEdit()" class="px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+        Edit Recipe
+      </button>
+
+      <!-- Save Changes -->
+      <button *ngIf="isEditable" (click)="saveChanges()" class="px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700">
+        Save Changes
+      </button>
+
+      <!-- Cancel -->
+      <button *ngIf="isEditable" (click)="isEditable = false" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md text-sm hover:bg-gray-300">
+        Cancel
+      </button>
+    </footer>
+  </article>
+</div>
